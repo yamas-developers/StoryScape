@@ -1,0 +1,14 @@
+{
+  "language__current_lang": "La lingua è impostata su Italiano",
+  "languages": "Lingue",
+  "settings": "Impostazioni",
+  "child_name": "NOME DEL BAMBINO:",
+  "name": "Nome",
+  "gender": "SESSO:",
+  "enter_child_name": "Inserisci il nome del bambino",
+  "select_gender": "Seleziona un sesso",
+  "settings_info": "SE VUOI CHE IL TUO BAMBINO DIVENTI IL PERSONAGGIO PRINCIPALE DELLA FIABA, PRIMA DI TUTTO INSERISCI IL SUO NOME E IL SUO SESSO. QUESTE INFORMAZIONI SONO SALVATE SOLTANTO SUL TUO DISPOSITIVO",
+  "downloading": "Scaricamento",
+  "open": "Apri",
+  "download": "Scarica"
+}

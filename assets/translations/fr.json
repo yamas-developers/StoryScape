@@ -1,0 +1,14 @@
+{
+  "language__current_lang": "La langue est réglée sur Français",
+  "languages": "Langues",
+  "settings": "Paramètres",
+  "child_name": "NOM DE L'ENFANT :",
+  "name": "Nom",
+  "gender": "GENRE :",
+  "enter_child_name": "Veuillez entrer le nom de l'enfant",
+  "select_gender": "Veuillez sélectionner un genre",
+  "settings_info": "SI VOUS SOUHAITEZ QUE VOTRE ENFANT DEVIENT LE PERSONNAGE PRINCIPAL DU CONTE DE FÉES, ENTREZ D'ABORD SON NOM ET SON GENRE. CES INFORMATIONS SONT ENREGISTRÉES UNIQUEMENT SUR VOTRE APPAREIL",
+  "downloading": "Téléchargement en cours",
+  "open": "Ouvrir",
+  "download": "Télécharger"
+}

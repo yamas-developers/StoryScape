@@ -1,0 +1,14 @@
+{
+  "language__current_lang": "Die Sprache ist auf Deutsch eingestellt",
+  "languages": "Sprachen",
+  "settings": "Einstellungen",
+  "child_name": "KINDSNAME:",
+  "name": "Name",
+  "gender": "GESCHLECHT:",
+  "enter_child_name": "Bitte geben Sie den Namen des Kindes ein",
+  "select_gender": "Bitte wählen Sie ein Geschlecht aus",
+  "settings_info": "WENN SIE MÖCHTEN, DASS IHR KIND ZUR HAUPTFIGUR DES MÄRCHENS WIRD, GEBEN SIE ZUERST SEINEN/ IHREN NAMEN UND SEIN/ IHR GESCHLECHT AN. DIESE INFORMATIONEN WERDEN NUR AUF IHREM GERÄT GESPEICHERT",
+  "downloading": "Herunterladen",
+  "open": "Öffnen",
+  "download": "Herunterladen"
+}
