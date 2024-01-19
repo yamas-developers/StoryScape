@@ -61,6 +61,23 @@ class AppProvider with ChangeNotifier {
   }
 
   bool _muted = false;
+  ListType _listType = ListType.List;
+  int _currentStoryIndex = 0;
+
+  int get currentStoryIndex => _currentStoryIndex;
+
+  set currentStoryIndex(int value) {
+    _currentStoryIndex = value;
+    notifyListeners();
+  }
+
+  ListType get listType => _listType;
+
+  set listType(ListType value) {
+    _listType = value;
+    notifyListeners();
+  }
+
   String? _name;
   String _locale = 'en';
 

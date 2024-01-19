@@ -34,6 +34,8 @@ const String backgroundImagePath = 'assets/images/bg_image.jpg';
 
 enum Genders { Boy, Girl }
 
+enum ListType { List, Grid }
+
 List<Language> langs = [
   Language(locale: 'en', lang: 'English', flag: ''),
   Language(locale: 'ru', lang: 'Русский', flag: ''),
@@ -48,6 +50,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'I Can Do It',
     'pages': '39',
     'size': '145 MB',
+    'color': Color(0xff51c451),
     'covers': {
       'cover_boy_en': 'assets/covers/cow_boy_en.png',
       'cover_boy_fr': 'assets/covers/cow_boy_fr.png',
@@ -64,6 +67,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'My Friend the Dolphin',
     'pages': '43',
     'size': '165 MB',
+    'color': Color(0xff8db9e8),
     'covers': {
       'cover_boy_en': 'assets/covers/dolphin_boy_en.png',
       'cover_boy_fr': 'assets/covers/dolphin_boy_fr.png',
@@ -80,6 +84,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'A Guest on the Farm',
     'pages': '46',
     'size': '234 MB',
+    'color': Color(0xff2064bd),
     'covers': {
       'cover_boy_en': 'assets/covers/farm_boy_en.png',
       'cover_boy_fr': 'assets/covers/farm_boy_fr.png',
@@ -96,6 +101,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'Brighter Than a Star',
     'pages': '48',
     'size': '140 MB',
+    'color': Color(0xff08308d),
     'covers': {
       'cover_boy_en': 'assets/covers/firefly_boy_en.png',
       'cover_boy_fr': 'assets/covers/firefly_boy_fr.png',
@@ -115,6 +121,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'I Can Do It',
     'pages': '39',
     'size': '145 MB',
+    'color': Color(0xff51c451),
     'covers': {
       'cover_boy_en': 'assets/covers/cow_boy_en.png',
       'cover_boy_fr': 'assets/covers/cow_boy_fr.png',
@@ -131,6 +138,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'My Friend the Dolphin',
     'pages': '43',
     'size': '165 MB',
+    'color': Color(0xff8db9e8),
     'covers': {
       'cover_boy_en': 'assets/covers/dolphin_boy_en.png',
       'cover_boy_fr': 'assets/covers/dolphin_boy_fr.png',
@@ -147,6 +155,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'A Guest on the Farm',
     'pages': '46',
     'size': '234 MB',
+    'color': Color(0xff2064bd),
     'covers': {
       'cover_boy_en': 'assets/covers/farm_boy_en.png',
       'cover_boy_fr': 'assets/covers/farm_boy_fr.png',
@@ -163,6 +172,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'Brighter Than a Star',
     'pages': '48',
     'size': '140 MB',
+    'color': Color(0xff08308d),
     'covers': {
       'cover_boy_en': 'assets/covers/firefly_boy_en.png',
       'cover_boy_fr': 'assets/covers/firefly_boy_fr.png',
@@ -180,6 +190,7 @@ List<Map<String, dynamic>> storiesData = [
     'name': 'I Can Do It',
     'pages': '39',
     'size': '145 MB',
+    'color': Color(0xff51c451),
     'covers': {
       'cover_boy_en': 'assets/covers/cow_boy_en.png',
       'cover_boy_fr': 'assets/covers/cow_boy_fr.png',

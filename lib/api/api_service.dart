@@ -6,15 +6,15 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:stories_app/constants.dart';
-import 'package:stories_app/routes/session_manager.dart';
 
 class ApiService {
   late http.StreamedResponse _response;
-  final dio = Dio();
 
   Future<File?> downloadFile(String identifier,
       {void Function(int, int)? progressCallback}) async {
     final directory = await getApplicationDocumentsDirectory();
+
+    final dio = Dio();
 
     String url = DownloadBaseUrl + identifier + '.zip';
     log('MK: url: $url');
@@ -33,6 +33,8 @@ class ApiService {
           options: Options(responseType: ResponseType.bytes),
           onReceiveProgress: progressCallback);
       log('MK: response status: ${response.statusCode}');
+
+      dio.close();
 
       File file = File(filePath);
       await file.writeAsBytes(response.data as List<int>);

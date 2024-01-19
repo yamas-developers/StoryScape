@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -85,6 +86,20 @@ class _StoriesDetailScreenState extends State<StoriesDetailScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    log('MK: args: $args');
+    if (args != null &&
+        args is Map &&
+        args.containsKey('first_image') &&
+        args['first_image'] != null) {
+      storyImage = File(args['first_image']);
+      setState(() {});
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     // audioPlayer.dispose();
 
@@ -92,6 +107,9 @@ class _StoriesDetailScreenState extends State<StoriesDetailScreen> {
   }
 
   _moveBackword(StoryProvider storyPro) {
+    if ((storyPro.story?.itemIndex ?? 0) <= 0) {
+      return;
+    }
     storyPro.story?.itemIndex -= 2;
     getNextStoryLine(context);
   }
@@ -114,15 +132,17 @@ class _StoriesDetailScreenState extends State<StoriesDetailScreen> {
         return await Future.value(true);
       },
       child: SafeArea(
-        child: Consumer<StoryProvider>(
-            builder: (BuildContext context, StoryProvider storyPro, _) {
+        child: Consumer2<StoryProvider, AppProvider>(builder:
+            (BuildContext context, StoryProvider storyPro, AppProvider appPro,
+                _) {
           return Scaffold(
             body: Stack(
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color:
-                        storyImage != null ? Colors.green : Colors.transparent,
+                    color: storyImage != null
+                        ? storyPro.story?.storyColor ?? Colors.blueGrey.shade50
+                        : Colors.transparent,
                     image: storyImage != null
                         ? null
                         : DecorationImage(
@@ -140,16 +160,22 @@ class _StoriesDetailScreenState extends State<StoriesDetailScreen> {
                       AnimatedOpacity(
                         opacity: changingStory ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 500),
-                        child: Container(
-                          // height: 330,
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          decoration: BoxDecoration(
-                            image: storyImage == null
-                                ? null
-                                : DecorationImage(
-                                    image: FileImage(storyImage!),
-                                    fit: BoxFit.cover,
-                                  ),
+                        child: Hero(
+                          tag: storyPro.story?.identifier ?? '',
+                          child: Container(
+                            // height: 330,
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            decoration: BoxDecoration(
+                              image: storyImage == null &&
+                                      (storyPro.story?.images.length == 0 ||
+                                          storyPro.story?.images.first == null)
+                                  ? null
+                                  : DecorationImage(
+                                      image: FileImage(storyImage ??
+                                          (storyPro.story?.images.first)!),
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
                           ),
                         ),
                       ),
@@ -311,50 +337,58 @@ class _StoriesDetailScreenState extends State<StoriesDetailScreen> {
                                   onTap: () {
                                     Navigator.pushNamed(context, storiesScreen);
                                   },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          border: Border.all(
-                                              color: secondaryColor,
-                                              width: 2.5),
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              border: Border.all(
+                                                  color: secondaryColor,
+                                                  width: 2.5),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5),
+                                            child: Text(
+                                              "${(storyPro.story?.itemIndex ?? 0) + 1}",
+                                              style: TextStyle(
+                                                  color: secondaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          if ((storyPro.story?.pages ?? 0) != 0)
+                                            Text(
+                                              "${storyPro.story?.pages}",
+                                              style: TextStyle(
+                                                  color: secondaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            )
+                                        ],
+                                      ),
+                                      Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        child: Text(
-                                          "${(storyPro.story?.itemIndex ?? 0) + 1}",
-                                          style: TextStyle(
-                                              color: secondaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
+                                            vertical: 5),
+                                        child: Image.asset(
+                                          "assets/icons/apps.png",
+                                          height: 26,
+                                          width: 26,
+                                          fit: BoxFit.contain,
+                                          color: secondaryColor,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      if ((storyPro.story?.pages ?? 0) != 0)
-                                        Text(
-                                          "${storyPro.story?.pages}",
-                                          style: TextStyle(
-                                              color: secondaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        )
                                     ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Image.asset(
-                                    "assets/icons/apps.png",
-                                    height: 26,
-                                    width: 26,
-                                    fit: BoxFit.contain,
-                                    color: secondaryColor,
                                   ),
                                 ),
                                 GestureDetector(

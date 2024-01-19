@@ -1,7 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stories_app/routes/session_manager.dart';
-import 'package:stories_app/ui/home_screen.dart';
 import 'package:stories_app/ui/widgets/music_widget.dart';
 import 'package:stories_app/utils/public_methods.dart';
 
@@ -214,14 +215,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                       appDataProvider.name =
                                           nameController.text;
-
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomeScreen()),
-                                        (route) => false,
-                                      );
+                                      Navigator.pop(context);
+                                      // Navigator.pushAndRemoveUntil(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           const HomeScreen()),
+                                      //   (route) => false,
+                                      // );
                                     }
                                   },
                                   child: Image.asset(
@@ -390,6 +391,78 @@ class GradientText extends StatelessWidget {
         Rect.fromLTWH(0, 0, bounds.width, bounds.height),
       ),
       child: Text(text, style: style),
+    );
+  }
+}
+
+class BookCoverAnimation extends StatefulWidget {
+  @override
+  _BookCoverAnimationState createState() => _BookCoverAnimationState();
+}
+
+class _BookCoverAnimationState extends State<BookCoverAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reset();
+        // Add logic to navigate to next screen or perform other actions
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _startAnimation() {
+    _controller.reset();
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _startAnimation,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          log('MK: rotating: ${3.14 * (_animation.value > 0.5 ? 0 : _animation.value)}');
+          return Transform(
+            alignment: Alignment.centerLeft,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(
+                  3.14 * (_animation.value > 0.5 ? 0.5 : _animation.value))
+              ..translate(0.0 * (1 - _animation.value), 0.0,
+                  0.0), // Adjust the translation to stop at the middle
+            child: child,
+          );
+        },
+        child: Image.asset(
+          "assets/covers/cow_boy_en.png",
+          fit: BoxFit.fill,
+          width: 360,
+        ), // Replace with your image asset
+      ),
     );
   }
 }

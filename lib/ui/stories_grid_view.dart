@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -9,18 +10,20 @@ import 'package:stories_app/providers/app_provider.dart';
 
 import 'widgets/open_story.dart';
 
-class PhotoGallery extends StatefulWidget {
-  const PhotoGallery({
+class StoriesGridVIew extends StatefulWidget {
+  const StoriesGridVIew({
     Key? key,
     this.imageSize,
+    this.startingIndex = 4,
   }) : super(key: key);
   final Size? imageSize;
+  final int startingIndex;
 
   @override
-  State<PhotoGallery> createState() => _PhotoGalleryState();
+  State<StoriesGridVIew> createState() => _StoriesGridVIewState();
 }
 
-class _PhotoGalleryState extends State<PhotoGallery> {
+class _StoriesGridVIewState extends State<StoriesGridVIew> {
   static const int _gridSize = 3;
 
   // Index starts in the middle of the grid (eg, 25 items, index will start at 13)
@@ -36,14 +39,18 @@ class _PhotoGalleryState extends State<PhotoGallery> {
 
   late final List<FocusNode> _focusNodes =
       List.generate(_imgCount, (index) => FocusNode());
-
-  //TODO: Remove this field (and associated workarounds) once web properly supports ClipPath (https://github.com/flutter/flutter/issues/124675)
   final bool useClipPathWorkAroundForWeb = kIsWeb;
 
   @override
   void initState() {
     super.initState();
     // _initPhotoIds();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _setIndex(widget.startingIndex);
+      setState(() {
+        newIndex = widget.startingIndex;
+      });
+    });
     _focusNodes[_index].requestFocus();
   }
 
@@ -52,6 +59,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     _skipNextOffsetTween = skipAnimation;
     setState(() => _index = value);
     _focusNodes[value].requestFocus();
+    context.read<AppProvider>().currentStoryIndex = value;
   }
 
   /// Determine the required offset to show the current selected index.
@@ -70,12 +78,13 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     return originOffset + indexedOffset;
   }
 
-  int newIndex = 5;
+  int newIndex = 0;
 
   /// Converts a swipe direction into a new index
   void _handleSwipe(Offset dir) {
     // Calculate new index, y swipes move by an entire row, x swipes move one index at a time
     newIndex = _index;
+    // if (newIndex < 0 || newIndex >= _imgCount - 1) return;
     if (dir.dy != 0) newIndex += _gridSize * (dir.dy > 0 ? -1 : 1);
     if (dir.dx != 0) newIndex += (dir.dx > 0 ? -1 : 1);
     // After calculating new index, exit early if we don't like it...
@@ -101,7 +110,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     Size imgSize = isLandscape
-        ? Size(width * .5, height * .66)
+        ? Size(width * .4, height * .66)
         : Size(width * .66, height * .5);
     imgSize = (widget.imageSize ?? imgSize) * _scale;
     // Get transform offset for the current _index
@@ -116,6 +125,8 @@ class _PhotoGalleryState extends State<PhotoGallery> {
         _skipNextOffsetTween ? Duration.zero : swipeDuration * .5;
     return Consumer<AppProvider>(
         builder: (BuildContext context, AppProvider appPro, _) {
+      dev.log(
+          'MK: tag here: ${_gridSize * imgSize.width + padding * (_gridSize - 1)}');
       return SafeArea(
         bottom: false,
         child: _AnimatedCutoutOverlay(
@@ -126,8 +137,10 @@ class _PhotoGalleryState extends State<PhotoGallery> {
           opacity: _scale == 1 ? 0.0 : 0,
           enabled: useClipPathWorkAroundForWeb == false,
           child: OverflowBox(
-            maxWidth: _gridSize * imgSize.width + padding * (_gridSize - 1),
-            maxHeight: _gridSize * imgSize.height + padding * (_gridSize - 1),
+            maxWidth:
+                (_gridSize * imgSize.width + padding * (_gridSize - 1)) + 100,
+            maxHeight:
+                (_gridSize * imgSize.height + padding * (_gridSize - 1)) + 100,
             alignment: Alignment.center,
             // Detect swipes in order to change index
             child: EightWaySwipeDetector(
@@ -149,8 +162,9 @@ class _PhotoGalleryState extends State<PhotoGallery> {
                   children: List.generate(
                       _imgCount,
                       (index) => StoryItem(
+                            increaseItemSize: true,
                             story: appPro.stories[index],
-                            showTags: index == newIndex,
+                            showTags: index == appPro.currentStoryIndex,
                           )),
                 ),
               ),

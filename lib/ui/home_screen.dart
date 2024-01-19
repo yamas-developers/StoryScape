@@ -1,18 +1,20 @@
 import 'dart:developer';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stories_app/api/api_service.dart';
 import 'package:stories_app/providers/app_provider.dart';
 import 'package:stories_app/routes/session_manager.dart';
+import 'package:stories_app/ui/widgets/open_story.dart';
 import 'package:stories_app/utils/public_methods.dart';
 
 import '../constants.dart';
 import '../models/story.dart';
 import '../routes/custom_text_field_widget.dart';
 import '../routes/public_methods.dart';
-import 'photo_gallery.dart';
+import 'stories_grid_view.dart';
 import 'widgets/music_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  int currentStoryIndex = 0;
+  // int currentStoryIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -76,34 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  // Positioned.fill(
-                  //   child: CarouselSlider.builder(
-                  //     itemCount: appPro.stories.length,
-                  //     options: CarouselOptions(
-                  //         aspectRatio: 16 / 9,
-                  //         initialPage: 0,
-                  //         enableInfiniteScroll: false,
-                  //         reverse: false,
-                  //         autoPlay: false,
-                  //         viewportFraction: 0.5,
-                  //         autoPlayCurve: Curves.fastOutSlowIn,
-                  //         enlargeCenterPage: true,
-                  //         scrollDirection: Axis.horizontal,
-                  //         onPageChanged: (index, reason) {
-                  //           setState(() {
-                  //             currentStoryIndex = index;
-                  //           });
-                  //         }),
-                  //     itemBuilder:
-                  //         (BuildContext context, int index, int realIndex) {
-                  //       return StoryItem(
-                  //         story: appPro.stories[index],
-                  //         showTags: currentStoryIndex == index,
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-                  PhotoGallery(),
+                  if (appPro.listType == ListType.Grid)
+                    StoriesGridVIew(
+                      startingIndex: appPro.currentStoryIndex,
+                    )
+                  else
+                    StoriesListView(
+                      startingIndex: appPro.currentStoryIndex,
+                    ),
                   ..._buildSideIcons(appPro),
                 ],
               );
@@ -116,23 +98,51 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       Align(
         alignment: Alignment.topLeft,
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, "settingsScreen");
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Image.asset(
-              "assets/icons/setting.png",
-              height: 45,
-              width: 45,
-              fit: BoxFit.contain,
-              color: secondaryColor,
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "settingsScreen");
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  "assets/icons/setting.png",
+                  height: 45,
+                  width: 45,
+                  fit: BoxFit.contain,
+                  color: secondaryColor,
+                ),
+              ),
             ),
-          ),
+            GestureDetector(
+              onTap: () {
+                if (appPro.listType == ListType.List) {
+                  appPro.listType = ListType.Grid;
+                } else {
+                  // carouselController =
+                  // carouselController..jumpToPage(appPro.currentStoryIndex);
+                  // setState(() {});
+                  appPro.listType = ListType.List;
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  appPro.listType == ListType.List
+                      ? "assets/icons/grid_icon.png"
+                      : "assets/icons/list_icon.png",
+                  height: 34,
+                  width: 34,
+                  fit: BoxFit.contain,
+                  color: secondaryColor,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      Align(
+      const Align(
         alignment: Alignment.topRight,
         child: MusicWidget(),
       ),
@@ -157,13 +167,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.pop(context);
                           },
                           child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
                                 color: bgColorSecondary,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(5),
                                     bottomRight: Radius.circular(18))),
-                            child: Icon(
+                            child: const Icon(
                               Icons.cancel_outlined,
                               color: secondaryColor,
                               size: 26,
@@ -177,8 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 18),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -194,8 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -230,11 +240,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       lines: 1,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
                                   Container(
-                                    padding: EdgeInsets.all(2),
+                                    padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
                                         color: secondaryColor,
                                         borderRadius:
@@ -245,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           numberController.clear();
                                         });
                                       },
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.clear,
                                         size: 22,
                                         color: bgColorSecondary,
@@ -309,9 +319,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .width *
                                               0.2,
                                           child: GridView.builder(
-                                            padding: EdgeInsets.all(6),
+                                            padding: const EdgeInsets.all(6),
                                             gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
                                               crossAxisCount: 3,
                                               crossAxisSpacing: 15,
                                               mainAxisSpacing: 10,
@@ -324,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     index + 1);
                                               } else if (index == 9 ||
                                                   index == 11) {
-                                                return SizedBox(); // Empty SizedBox for the zero button
+                                                return const SizedBox(); // Empty SizedBox for the zero button
                                               } else {
                                                 return buildNumberButton(
                                                     0); // Zero button
@@ -364,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: Center(
                                             child: Text(
                                               "$index",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   color: bgColorSecondary,
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold),
@@ -374,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     }),
                                   ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
@@ -412,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -422,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Flexible(
                           child: Text(
                             'Downloads'.toUpperCase(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: secondaryColor),
@@ -435,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? Flexible(
                             child: Text(
                               'No Downloads'.toUpperCase(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: secondaryColor),
@@ -469,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     }
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 6, horizontal: 12),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(7),
@@ -479,12 +489,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: Colors.grey.withOpacity(0.3),
                                           spreadRadius: 4,
                                           blurRadius: 6,
-                                          offset: Offset(0,
+                                          offset: const Offset(0,
                                               3), // changes position of shadow
                                         ),
                                       ],
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       "Delete",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -505,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 0,
                   ),
                   // Row(
@@ -533,7 +543,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.pop(context);
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 6, horizontal: 32),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(7),
@@ -543,12 +553,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.grey.withOpacity(0.3),
                                   spreadRadius: 4,
                                   blurRadius: 6,
-                                  offset: Offset(
+                                  offset: const Offset(
                                       0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
-                            child: Text(
+                            child: const Text(
                               "Got it!",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -694,7 +704,7 @@ class _HomeScreenState extends State<HomeScreen> {
             "$index"
             // : "0"
             ,
-            style: TextStyle(
+            style: const TextStyle(
               color: gradientColor, // Change to your desired color
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -703,5 +713,66 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+}
+
+class StoriesListView extends StatefulWidget {
+  const StoriesListView({
+    super.key,
+    required this.startingIndex,
+  });
+
+  final int startingIndex;
+
+  @override
+  State<StoriesListView> createState() => _StoriesListViewState();
+}
+
+class _StoriesListViewState extends State<StoriesListView> {
+  CarouselController carouselController = CarouselController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      carouselController..animateToPage(widget.startingIndex);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AppProvider>(builder: (context, appPro, _) {
+      return Positioned.fill(
+        child: CarouselSlider.builder(
+          itemCount: appPro.stories.length,
+          carouselController: carouselController,
+          options: CarouselOptions(
+              aspectRatio: 16 / 9,
+              initialPage: 0,
+              enableInfiniteScroll: false,
+              reverse: false,
+              autoPlay: false,
+              viewportFraction: 0.5,
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: true,
+              scrollDirection: Axis.horizontal,
+              onPageChanged: (index, reason) {
+                appPro.currentStoryIndex = index;
+                // setState(() {
+                //   currentStoryIndex = index;
+                // });
+              }),
+          itemBuilder: (BuildContext context, int index, int realIndex) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              child: StoryItem(
+                story: appPro.stories[index],
+                showTags: appPro.currentStoryIndex == index,
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 }
